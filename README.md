@@ -8,6 +8,20 @@ Raspberry Pi Pico W
 ### Display
 
 Waveshare Pico-ePaper-7.5B 
+[documentation](https://www.waveshare.com/wiki/Pico-ePaper-7.5-B)
+
+
+
+| e-Paper | Pico/Pico2 | Description                                                         |
+| :-----: | :--------: | :------------------------------------------------------------------ |
+|   VCC   |    VSYS    | Power input                                                         |
+|   GND   |    GND     | Ground                                                              |
+|   DIN   |    GP11    | MOSI pin of SPI interface, data transmitted from the Host to Slave. |
+|   CLK   |    GP10    | SCK pin of SPI interface, clock input of the Slave                  |
+|   CS    |    GP9     | Chip select pin of SPI interface, Low Active                        |
+|   DC    |    GP8     | Data/Command control pin (High: Data; Low: Command)                 |
+|   RST   |    GP12    | Reset pin, low active                                               |
+|  BUSY   |    GP13    | Busy output pin                                                     |
 
 ### Weather forecast source
 
