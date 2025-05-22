@@ -49,3 +49,6 @@ https://openweathermap.org/weather-conditions
 ## Setup
 
 800 x 480
+
+## html to pdf
+https://wkhtmltopdf.org/downloads.html
