@@ -42,3 +42,10 @@ Accuweather
 
 icons: 
 https://openweathermap.org/weather-conditions
+
+
+# Server
+
+## Setup
+
+800 x 480

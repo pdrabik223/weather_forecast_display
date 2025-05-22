@@ -315,7 +315,7 @@ class EPD_7in5_B:
         self.send_data ((Yend-1)%256)  #y-end
         self.send_data (0x01)
 
-        if self.par tFlag == 1:
+        if self.partFlag == 1:
             self.partFlag = 0
             self.send_command(0x10)
             for i in range(0, Width):
@@ -337,104 +337,25 @@ class EPD_7in5_B:
 
 if __name__=="__main__":
     epd = EPD_7in5_B()
-    # epd.Clear()
     
     print("1")
-    # epd.imagered.fill(0xff) # make whole screen red
-    # epd.display()
-    # print("1")
-    # time.sleep(5)
-    # print("1")
-    # epd.imageblack.fill(0xff) # make whole screen white
-    # epd.display()
-    # print("1")
-    # time.sleep(5)
-    # print("1")
-    # # epd.imageblack.fill(0x00) # make whole screen black
-    
-    # epd.imagered.fill(0x00) # make whole screen black
-    # epd.display()
-    # print("1")
-    # time.sleep(5)
-    # print("1")
-    # epd.imageblack.text("Waveshare", 5, 10, 0x00)
 
-    # epd.imagered.text("Pico_ePaper-7.5-B", 5, 40, 0xff)
-    # epd.imageblack.text("Raspberry Pico", 5, 70, 0x00)
-    # epd.delay_ms(5000)
-    
-    # epd.imageblack.vline(10, 90, 60, 0x00)
-    # epd.imageblack.vline(120, 90, 60, 0x00)
-    # epd.imagered.hline(10, 90, 110, 0xff)
-    # epd.imagered.hline(10, 150, 110, 0xff)
-    # epd.imagered.line(10, 90, 120, 150, 0xff)
-    # epd.imagered.line(120, 90, 10, 150, 0xff)
-    # epd.display()
-    # epd.delay_ms(5000)
-    
-    # epd.imageblack.rect(10, 180, 50, 80, 0x00 )
-    # epd.imageblack.fill_rect(70, 180, 50, 80,0x00 )
-    # epd.imagered.rect(10, 300, 50, 80, 0xff )
-    # epd.imagered.fill_rect(70, 300, 50, 80,0xff )
-    # epd.display()
-    # epd.delay_ms(5000)
-
-    # for k in range(0, 3):
-    #     for j in range(0, 3):
-    #         for i in range(0, 5):
-    #             epd.imageblack.fill_rect(200+100+j*200, i*20+k*200, 100, 10, 0x00)
-    #         for i in range(0, 5):
-    #             epd.imagered.fill_rect(200+0+j*200, i*20+100+k*200, 100, 10, 0xff)
-    
-    # epd.imageblack.sfill(0xff)
-    
-
-    
-    # epd.display()
-    # epd.delay_ms(5000)
-
-    # # # partial update
-    # epd.init()
-    # epd.imageblack.fill(0xff)
-    # epd.imagered.fill(0xff)
-    print("2")
-    # epd.display_Base_color(0xFF)
-    # print("2")
-    # epd.init_part()
-    print("2")
-    # epd.imagered.fill(0xff) # make whole screen red
-    # print("3")
-
-    # partial update
-    # epd.init()
-    # epd.imageblack.fill(0xff)
-    # epd.display_Base_color(0xFF)
     epd.init_part()
     print("2")
     
     for i in range(0, 10):
-        if i % 3 == 0:
+        if i % 2 == 0:
             print("black")
-            epd.imageblack.fill_rect(175, 105, 100, 100, 0x00)
-            epd.display_Partial(epd.buffer_black, 0, 0, 800, 480)
-        
-        elif i % 3 == 1 :
-            print("white")
-            epd.imageblack.fill_rect(175, 105, 100, 100, 0xff)
-            epd.display_Partial(epd.buffer_black, 0, 0, 800, 480)
-            
-        else:
-            print("red")
-            epd.imagered.fill_rect(175, 105, 100, 100, 0xff)
+            epd.imagered.fill(0x00)
             epd.display_Partial(epd.buffer_red, 0, 0, 800, 480)
-        epd.delay_ms(5000)
+        
+        elif i % 2 == 1 :
+            print("white")
+            epd.imagered.fill(0xff)
+            # epd.imageblack.fill_rect(175, 105, 100, 100, 0xff)
+            epd.display_Partial(epd.buffer_red, 0, 0, 800, 480)
+            epd.delay_ms(5000)
             
-            
-
-    
-        # print("4")
-    # epd.init()       
-    # epd.Clear()
     print("sleep")
     epd.sleep()
 
