@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<!-- <link rel="stylesheet" href="style.css"> -->
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Weather Station</title>
+    <!-- <link rel="icon" type="image/x-icon" href="robot_arm.png"> -->
+    <style>
+        .config-cell {
+            padding: 24px;
+            border-style: solid;
+            border-radius: 24px;
+            margin-bottom: 4%;
+        }
+    </style>
+
+</head>
+
+<body style="padding: 5% 5%; max-width: 1400px; min-width: 400px;  margin: auto;">
+    <H1>Ustawienia stacji pogodowej </H1>
+    <div class="config-cell" style="margin-top: 2%;">
+
+        <form action="./" method="GET">
+            <h2>Refresh data</h2>
+            <p>Pobiera nowe dane pogodowe</p>
+            <input type="hidden" name="load_data" value="true" />
+            <input type="submit" class="primary" value="Odśwież" />
+        </form>
+    </div>
+    <div class="config-cell" style="margin-top: 2%;">
+        <form action="./" method="GET">
+
+            <h2>Adres</h2>
+            <p>Miejsce dla którego dane o pogodzie zostaną pobrane</p>
+            <input type="text" value="{location}" name="location" />
+
+            <h2>Url zewnętrznego serwera</h2>
+            <p>Ścieżka do serwera zewnętrznego</p>
+            <input type="text" value="{remote_url}" name="remote_url" />
+
+            <h2>Częstotliwość odświeżania automatycznego</h2>
+            <p>Ilość minut pomiędzy odświeżeniem ekranu</p>
+            <input type="number" min="1" max="1440" step="1" value="{auto_refresh_interval_minutes}"
+                name="auto_refresh_interval_minutes" />
+
+
+            <h2>Weather api key</h2>
+            <p>Miejsce dla którego dane o pogodzie zostaną pobrane</p>
+            <input type="password" value="{weather_api_key}" name="weather_api_key" />
+            <input type="hidden" name="save_config" value="true" />
+            <input type="submit" value="Zapisz" style="margin-top: 4%;" />
+        </form>
+
+        <form action="./" method="GET">
+            <input type="hidden" name="load_default_config" value="true" />
+            <input type="submit" class="secondary" value="Wczytaj domyślne" style="margin-top: 2%;" />
+        </form>
+    </div>
+
+</body>
+
+</html>

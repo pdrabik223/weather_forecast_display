@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Weather in Rest</title>
+    <title>Weather station control panel</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,31 +11,32 @@
 
         .display {
             width: 100%;
+            /* background: red; */
             height: 480;
             width: 800;
-            background-color: #fff;
-
+            /* padding: 20px; */
         }
 
         .weather-summary {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .weather-container {
             width: 100%;
             overflow: hidden;
+            /* clears floats */
         }
 
         .weather-box {
 
-            width: 74px;
-            margin: 10px;
-            /* padding: 6px; */
+            width: 56px;
+            margin: 4px;
+            padding: 6px;
             float: left;
             /* classic row layout */
             background-color: #fff;
-            /* border: 1px solid #000; */
-            font-size: 18px;
+            border: 1px solid #000;
+            font-size: 12px;
             text-align: center;
             border-radius: 5px;
         }
@@ -46,15 +47,21 @@
             margin: 4px;
             padding: 6px;
             float: left;
-
+            /* classic row layout */
+            background-color: #fff;
+            /* border: 1px solid #000; */
             font-size: 24px;
             text-align: center;
             border-radius: 5px;
         }
 
+        .weather-icon {
+            font-size: 22px;
+            margin: 5px 0;
+        }
+
         .hour {
             font-weight: bold;
-            font-size: 20px;
             margin-bottom: 3px;
         }
 
@@ -63,6 +70,7 @@
             color: #d33;
         }
 
+        /* Clearfix for older browsers */
         .clearfix:after {
             content: "";
             display: table;
@@ -73,78 +81,75 @@
 
 <body>
     <div class="display">
-        <h1 style="font-size: 52; margin-bottom: 24px;"> 7:00 czwartek 4 czerwca Zielonczyn </h1>
-        <table style="margin-bottom: 24px;">
-            <tr>
-                <td>
-                    <img src="C:\D\weather_forecast_display\server\static/icons8-cloud-96.png" width="100%">
-                </td>
-                <td>
-                    <div style="float: left; text-align: left; padding-left: 20px;">
-                        <div style="font-size: 22px;" class="temp">Odczuwalna: 30°C</div>
-                        <div style="font-size: 22px; font-weight: bold;">Temp. powietrza: 30°C</div>
-                        <div style="font-size: 22px; font-weight: bold;">Wilgotność: 30%</div>
-                    </div>
-                </td>
-                <td>
-                    <div style="float: left; text-align: left; padding-left: 24px;">
-                        <div style="font-size: 22px;" class="temp">Odczuwalna: 30°C</div>
-                        <div style="font-size: 22px; font-weight: bold;">Temp. powietrza: 30°C</div>
-                        <div style="font-size: 22px; font-weight: bold;">Wilgotność: 30%</div>
-                    </div>
-                </td>
-            </tr>
-
-        </table>
+        <h1> 7:00 czwartek 4 czerwca Zielonczyn </h1>
+        <div class="main-panel clearfix">
+            <div class="weather-icon" style="float: left;">☀️</div>
+            <div style="float: left; text-align: left;">
+                <div class="temp">Odczuwalna: 30°C</div>
+                <div>Temp. powietrza: 30°C</div>
+                <div>Wilogtnść: 30%</div>
+            </div>
+        </div>
 
         <div class="weather-container clearfix">
             <div class="weather-box">
                 <div class="hour">7:00</div>
-                <img src="C:\D\weather_forecast_display\server\static/icons8-cloud-96.png" width="100%">
+                <img src="picture.png">
+                <!-- <div class="weather-icon"></div> -->
                 <div class="temp">30°</div>
-                <div>-30° 30%</div>
+                <div>30° 30%</div>
             </div>
             <div class="weather-box">
                 <div class="hour">9:00</div>
-                <img src="C:\D\weather_forecast_display\server\static/icons8-cloud-lightning-96.png" width="100%">
+                <div class="weather-icon">☀️</div>
                 <div class="temp">29°</div>
                 <div>29° 20%</div>
             </div>
             <div class="weather-box">
                 <div class="hour">11:00</div>
-                <img src="C:\D\weather_forecast_display\server\static/icons8-partly-cloudy-day-96.png" width="100%">
+                <div class="weather-icon">🌤️</div>
                 <div class="temp">25°</div>
                 <div>25° 10%</div>
             </div>
             <div class="weather-box">
                 <div class="hour">12:00</div>
-                <img src="C:\D\weather_forecast_display\server\static/icons8-rain-96.png" width="100%">
+                <div class="weather-icon">🌧️</div>
                 <div class="temp">20°</div>
                 <div>20° 50%</div>
             </div>
             <div class="weather-box">
                 <div class="hour">15:00</div>
-                <img src="C:\D\weather_forecast_display\server\static/icons8-sun-96.png" width="100%">
-
+                <div class="weather-icon">🌦️</div>
                 <div class="temp">25°</div>
                 <div>25° 60%</div>
             </div>
             <div class="weather-box">
                 <div class="hour">16:00</div>
-                <img src="C:\D\weather_forecast_display\server\static/icons8-wet-96.png" width="100%">
+                <div class="weather-icon">☀️</div>
                 <div class="temp">30°</div>
                 <div>30° 30%</div>
             </div>
             <div class="weather-box">
                 <div class="hour">16:00</div>
-                <img src="C:\D\weather_forecast_display\server\static/icons8-winter-96.png" width="100%">
-
+                <div class="weather-icon">☀️</div>
                 <div class="temp">30°</div>
                 <div>30° 30%</div>
             </div>
             <div class="weather-box">
                 <div class="hour">16:00</div>
-                <img src="C:\D\weather_forecast_display\server\static/icons8-winter-96.png" width="100%">
+                <div class="weather-icon">☀️</div>
+                <div class="temp">30°</div>
+                <div>30° 30%</div>
+            </div>
+            <div class="weather-box">
+                <div class="hour">16:00</div>
+                <div class="weather-icon">☀️</div>
+                <div class="temp">30°</div>
+                <div>30° 30%</div>
+            </div>
+            <div class="weather-box">
+                <div class="hour">16:00</div>
+                <div class="weather-icon">☀️</div>
                 <div class="temp">30°</div>
                 <div>30° 30%</div>
             </div>
