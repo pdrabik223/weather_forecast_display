@@ -1,5 +1,6 @@
 # # save this as app.py
 import io
+import requests
 from flask import Flask, render_template, jsonify, send_file
 
 from e_ink_screen_tools import get_grayscale_screenshot
@@ -8,9 +9,6 @@ app = Flask(__name__)
 
 # #TODO add sql db for users and login
 
-
-API_KEY = "your_openweathermap_api_key"
-CITY = "London"
 
 
 @app.route("/")
@@ -28,3 +26,5 @@ def get_weather_screenshot():
         download_name="weather_forecast_location_time",
         # as_attachment=True,
     )
+
+
