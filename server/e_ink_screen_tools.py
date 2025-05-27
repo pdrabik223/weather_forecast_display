@@ -12,8 +12,8 @@ class PixelColor:
 
 def get_pixel_color(image_pixel: np.typing.NDArray) -> PixelColor:
 
-    pixel_sum = sum(image_pixel[:-1]) / (255 * 3)
-    if pixel_sum > 0.2:
+    # pixel_sum = sum(image_pixel[:-1]) / (255 * 3)
+    if (image_pixel == [255, 255, 255, 255]).all():
         return PixelColor.White
     return PixelColor.Black
 
@@ -37,7 +37,7 @@ def get_grayscale_screenshot() -> bytearray:
         "enable-local-file-access": "",
     }
     # temp_image_path = "temp.jpg"
-    img = imgkit.from_file("templates/weather_page.html", False, options=options)
+    img = imgkit.from_url("http://127.0.0.1:5000", False, options=options)
     img = Image.open(io.BytesIO(img))
 
     original_ss = np.array(img)

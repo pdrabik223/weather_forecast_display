@@ -7,12 +7,12 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: black;
         }
 
         .display {
-            width: 100%;
-            height: 480;
-            width: 800;
+            height: 480px;
+            width: 800px;
             background-color: #fff;
 
         }
@@ -28,7 +28,7 @@
 
         .weather-box {
 
-            width: 74px;
+            width: 80px;
             margin: 10px;
             /* padding: 6px; */
             float: left;
@@ -69,28 +69,22 @@
             clear: both;
         }
     </style>
+
 </head>
 
 <body>
     <div class="display">
-        <h1 style="font-size: 52; margin-bottom: 24px;"> 7:00 czwartek 4 czerwca Zielonczyn </h1>
+        <h1 style="font-size: 52; text-align: right; margin-bottom: 24px;">{{headline}}</h1>
         <table style="margin-bottom: 24px;">
             <tr>
                 <td>
-                    <img src="C:\D\weather_forecast_display\server\static/icons8-cloud-96.png" width="100%">
+                    <img src="{{day_icon}}" width="100%">
                 </td>
                 <td>
                     <div style="float: left; text-align: left; padding-left: 20px;">
-                        <div style="font-size: 22px;" class="temp">Odczuwalna: 30°C</div>
-                        <div style="font-size: 22px; font-weight: bold;">Temp. powietrza: 30°C</div>
-                        <div style="font-size: 22px; font-weight: bold;">Wilgotność: 30%</div>
-                    </div>
-                </td>
-                <td>
-                    <div style="float: left; text-align: left; padding-left: 24px;">
-                        <div style="font-size: 22px;" class="temp">Odczuwalna: 30°C</div>
-                        <div style="font-size: 22px; font-weight: bold;">Temp. powietrza: 30°C</div>
-                        <div style="font-size: 22px; font-weight: bold;">Wilgotność: 30%</div>
+                        <div style="font-size: 22px;" class="temp">{{temp_min}}</div>
+                        <div style="font-size: 22px; font-weight: bold;">{{temp_max}}</div>
+                        <div style="font-size: 22px; font-weight: bold;">{{precipitation}}</div>
                     </div>
                 </td>
             </tr>
@@ -99,56 +93,47 @@
 
         <div class="weather-container clearfix">
             <div class="weather-box">
-                <div class="hour">7:00</div>
-                <img src="C:\D\weather_forecast_display\server\static/icons8-cloud-96.png" width="100%">
-                <div class="temp">30°</div>
-                <div>-30° 30%</div>
+                <div class="hour">{{hour_0}}</div>
+                <img src="{{pred_icon_0}}" width="100%">
+                <div>{{hour_temp_0}} {{precipitation_probability_0}}</div>
             </div>
             <div class="weather-box">
-                <div class="hour">9:00</div>
-                <img src="C:\D\weather_forecast_display\server\static/icons8-cloud-lightning-96.png" width="100%">
-                <div class="temp">29°</div>
-                <div>29° 20%</div>
+                <div class="hour">{{hour_1}}</div>
+                <img src="{{pred_icon_1}}" width="100%">
+                <div>{{hour_temp_1}} {{precipitation_probability_1}}</div>
             </div>
             <div class="weather-box">
-                <div class="hour">11:00</div>
-                <img src="C:\D\weather_forecast_display\server\static/icons8-partly-cloudy-day-96.png" width="100%">
-                <div class="temp">25°</div>
-                <div>25° 10%</div>
+                <div class="hour">{{hour_2}}</div>
+                <img src="{{pred_icon_2}}" width="100%">
+                <div>{{hour_temp_2}} {{precipitation_probability_2}}</div>
             </div>
             <div class="weather-box">
-                <div class="hour">12:00</div>
-                <img src="C:\D\weather_forecast_display\server\static/icons8-rain-96.png" width="100%">
-                <div class="temp">20°</div>
-                <div>20° 50%</div>
+                <div class="hour">{{hour_3}}</div>
+                <img src="{{pred_icon_3}}" width="100%">
+                <div>{{hour_temp_3}} {{precipitation_probability_3}}</div>
             </div>
             <div class="weather-box">
-                <div class="hour">15:00</div>
-                <img src="C:\D\weather_forecast_display\server\static/icons8-sun-96.png" width="100%">
+                <div class="hour">{{hour_4}}</div>
+                <img src="{{pred_icon_4}}" width="100%">
 
-                <div class="temp">25°</div>
-                <div>25° 60%</div>
+                <div>{{hour_temp_4}} {{precipitation_probability_4}}</div>
             </div>
             <div class="weather-box">
-                <div class="hour">16:00</div>
-                <img src="C:\D\weather_forecast_display\server\static/icons8-wet-96.png" width="100%">
-                <div class="temp">30°</div>
-                <div>30° 30%</div>
+                <div class="hour">{{hour_5}}</div>
+                <img src="{{pred_icon_5}}" width="100%">
+                <div>{{hour_temp_5}} {{precipitation_probability_5}}</div>
             </div>
             <div class="weather-box">
-                <div class="hour">16:00</div>
-                <img src="C:\D\weather_forecast_display\server\static/icons8-winter-96.png" width="100%">
+                <div class="hour">{{hour_6}}</div>
+                <img src="{{pred_icon_6}}" width="100%">
 
-                <div class="temp">30°</div>
-                <div>30° 30%</div>
+                <div>{{hour_temp_6}} {{precipitation_probability_6}}</div>
             </div>
             <div class="weather-box">
-                <div class="hour">16:00</div>
-                <img src="C:\D\weather_forecast_display\server\static/icons8-winter-96.png" width="100%">
-                <div class="temp">30°</div>
-                <div>30° 30%</div>
+                <div class="hour">{{hour_7}}</div>
+                <img src="{{pred_icon_7}}" width="100%">
+                <div>{{hour_temp_7}} {{precipitation_probability_7}}</div>
             </div>
-            <!-- Add more boxes as needed -->
         </div>
     </div>
 </body>

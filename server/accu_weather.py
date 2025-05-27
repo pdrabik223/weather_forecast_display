@@ -20,6 +20,8 @@ class Weather(TypedDict):
     # Null in the absence of precipitation.
     precipitation_type: str | None
     temperature: float
+
+    # light, moderate, or heavy
     precipitation_intensity: str | None
 
 
@@ -39,6 +41,7 @@ class OneDayPrediction(TypedDict):
     night_icon: int
     night_has_precipitation: bool
     night_precipitation_type: str | None
+    # light, moderate, or heavy
     night_precipitation_intensity: str | None
 
 
@@ -59,7 +62,7 @@ class HourlyPrediction(TypedDict):
 def get_param(function) -> Any | None:
     try:
         return function()
-    except KeyError as err:
+    except KeyError:
         return None
 
 
@@ -147,10 +150,12 @@ def get_one_day_forecast(location_key: int, api_key: str) -> OneDayPrediction | 
     }
 
 
-def get_one_day_hourly_forecast(location_key: int, api_key: str):
+def get_one_day_hourly_forecast(
+    location_key: int, api_key: str
+) -> list[HourlyPrediction]:
     r = requests.get(
         f"http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/{location_key}",
-        params={"apikey": api_key},
+        params={"apikey": api_key, "metric": True},
     )
 
     if r.status_code != 200:
@@ -173,7 +178,9 @@ def get_one_day_hourly_forecast(location_key: int, api_key: str):
 
 
 if __name__ == "__main__":
-    # print(get_locations(API_KEY, CITY))
-    # print(get_current_conditions(274340, API_KEY))
+
+    CITY = "Łódź"
+    print(get_locations(API_KEY, CITY))
+    print(get_current_conditions(274340, API_KEY))
     print(get_one_day_forecast(274340, API_KEY))
-    # print(get_one_day_hourly_forecast(274340, API_KEY))
+    print(get_one_day_hourly_forecast(274340, API_KEY))

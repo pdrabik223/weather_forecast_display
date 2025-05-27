@@ -1,30 +1,151 @@
 # # save this as app.py
+import datetime
 import io
-import requests
-from flask import Flask, render_template, jsonify, send_file
+from flask import Flask, render_template, send_file
 
 from e_ink_screen_tools import get_grayscale_screenshot
+from accu_weather import (
+    OneDayPrediction,
+    get_one_day_forecast,
+    get_one_day_hourly_forecast,
+)
 
 app = Flask(__name__)
 
 # #TODO add sql db for users and login
 
 
+API_KEY = ""
+CITY = "Łódź"
+
+
+months_polish = [
+    "stycznia",
+    "lutego",
+    "marca",
+    "kwietnia",
+    "maja",
+    "czerwca",
+    "lipca",
+    "sierpnia",
+    "września",
+    "października",
+    "listopada",
+    "grudnia",
+]
+
+days_polish = [
+    "poniedziałek",
+    "wtorek",
+    "środa",
+    "czwartek",
+    "piątek",
+    "sobota",
+    "niedziela",
+]
+
+
+icons_path = "static/"
+
+
+def get_icon(icon_id) -> str:
+
+    icons = {
+        1: "icons8-sun-96.png",  # clear sky
+        2: "icons8-partly-cloudy-day-96.png",  # few clouds
+        3: "icons8-cloud-96.png",  # scattered clouds
+        4: "icons8-cloud-96.png",  # broken clouds
+        5: "icons8-rain-96.png",  # shower rain
+        6: "icons8-wet-96.png",  # rain
+        7: "icons8-cloud-lightning-96.png",  # thunderstorm
+        8: "icons8-winter-96.png",  # snow
+    }
+
+    try:
+        return icons_path + icons[icon_id]
+    except KeyError as err:
+        return icons_path + "icons8-cloud-96.png"
+
+
+def get_headline(location: str) -> str:
+    now = datetime.datetime.now()
+
+    month = months_polish[now.month - 1]
+
+    day = days_polish[datetime.datetime.today().weekday()]
+
+    return f"{day} {now.day} {month} {location}"
+
+
+def get_day_prediction(location_key: int, api_key: str) -> dict:
+    one_day_prediction: OneDayPrediction = get_one_day_forecast(location_key, api_key)
+    print(one_day_prediction["day_icon"])
+
+    da_fuck_f_string_1 = round(one_day_prediction["min_temperature"])
+    da_fuck_f_string_2 = round(one_day_prediction["max_temperature"])
+
+    return {
+        "temp_min": f"Min: {da_fuck_f_string_1}°C",
+        "temp_max": f"Max: {da_fuck_f_string_2}°C",
+        "precipitation": "Wilgotność: 30%",
+        "day_icon": get_icon(one_day_prediction["day_icon"]),
+    }
+
+
+def get_hourly_prediction(location_key: int, api_key: str) -> dict:
+    pred_dict = {}
+    no_weather_boxes = 8
+    now = datetime.datetime.now()
+
+    hourly_predictions = get_one_day_hourly_forecast(location_key, api_key)
+
+    for i in range(no_weather_boxes):
+        print(i, hourly_predictions[i]["weather_icon"])
+        pred_dict.update(
+            {
+                f"hour_{i}": f"{now.hour + i}:00",
+                f"pred_icon_{i}": get_icon(hourly_predictions[i]["weather_icon"]),
+                f"hour_temp_{i}": str(round(hourly_predictions[i]["temperature"]))
+                + "°",
+                f"precipitation_probability_{i}": str(
+                    round(hourly_predictions[i]["precipitation_probability"])
+                )
+                + "%",
+            }
+        )
+    return pred_dict
+
 
 @app.route("/")
 def index():
-    return render_template("weather_page.html")
+
+    location = "Łódź"
+
+    return render_template(
+        "weather_page.html",
+        headline=get_headline(location),
+        **get_day_prediction(274340, API_KEY),
+        **get_hourly_prediction(274340, API_KEY),
+    )
 
 
-@app.route("/w")
+# @app.route("/weather_data")
+# def weather_data():
+#     location = "Łódź"
+#     return json.dumps(
+#         {
+#             "headline": get_headline(location),
+#         }
+#     )
+
+
+@app.route("/weather_screenshot")
 def get_weather_screenshot():
+
     data = io.BytesIO(get_grayscale_screenshot())
-    print(data.getbuffer().nbytes)
+
     return send_file(
         data,
         mimetype="application/x-binary",
         download_name="weather_forecast_location_time",
-        # as_attachment=True,
     )
-
-
