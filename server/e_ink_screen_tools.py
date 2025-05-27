@@ -19,7 +19,7 @@ def get_pixel_color(image_pixel: np.typing.NDArray) -> PixelColor:
 
 
 # returns 800 x 480 bytearray
-def get_grayscale_screenshot() -> bytearray:
+def get_grayscale_screenshot(url:str) -> bytearray:
     EPD_WIDTH = 800
     EPD_HEIGHT = 480
 
@@ -37,7 +37,7 @@ def get_grayscale_screenshot() -> bytearray:
         "enable-local-file-access": "",
     }
     # temp_image_path = "temp.jpg"
-    img = imgkit.from_url("http://127.0.0.1:5000", False, options=options)
+    img = imgkit.from_url(url, False, options=options)
     img = Image.open(io.BytesIO(img))
 
     original_ss = np.array(img)
