@@ -1,7 +1,7 @@
 # # save this as app.py
 import datetime
 import io
-from flask import Flask, render_template, send_file
+from flask import Flask, render_template, request, send_file
 
 from e_ink_screen_tools import get_grayscale_screenshot
 from accu_weather import (
@@ -11,12 +11,6 @@ from accu_weather import (
 )
 
 app = Flask(__name__)
-
-# #TODO add sql db for users and login
-
-
-API_KEY = ""
-CITY = "Łódź"
 
 
 months_polish = [
@@ -119,30 +113,38 @@ def get_hourly_prediction(location_key: int, api_key: str) -> dict:
 @app.route("/")
 def index():
 
-    location = "Łódź"
+    api_key = request.args.get("api_key", default=None)
+    location_key = request.args.get("location_key", default=None)
+    location = request.args.get("location", default=None)
+    # location = location.decode("utf-8")
+
+    location_key = int(location_key)
+
+    if api_key == None or location_key == None or location == None:
+        return 500
 
     return render_template(
         "weather_page.html",
         headline=get_headline(location),
-        **get_day_prediction(274340, API_KEY),
-        **get_hourly_prediction(274340, API_KEY),
+        **get_day_prediction(location_key, api_key),
+        **get_hourly_prediction(location_key, api_key),
     )
-
-
-# @app.route("/weather_data")
-# def weather_data():
-#     location = "Łódź"
-#     return json.dumps(
-#         {
-#             "headline": get_headline(location),
-#         }
-#     )
 
 
 @app.route("/weather_screenshot")
 def get_weather_screenshot():
 
-    data = io.BytesIO(get_grayscale_screenshot())
+    api_key = request.args.get("api_key", default=None)
+    location_key = request.args.get("location_key", default=None)
+    location = request.args.get("location", default=None)
+
+    if api_key == None or location_key == None or location == None:
+        return 500
+
+    url = "http://192.168.0.108:5000/"
+    url = f"{url}?api_key={api_key}&location_key={location_key}&location={location}"
+
+    data = io.BytesIO(get_grayscale_screenshot(url))
 
     return send_file(
         data,
