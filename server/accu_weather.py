@@ -74,6 +74,7 @@ def get_locations(city: str | int, api_key: str) -> None | list[Location]:
     )
 
     if r.status_code != 200:
+        print(r.json())
         return None
 
     for resp in r.json():
@@ -99,6 +100,7 @@ def get_current_conditions(location_key: int, api_key: str) -> Weather | None:
     )
 
     if r.status_code != 200:
+        print(r.json())
         return None
 
     resp = r.json()[0]
@@ -119,6 +121,7 @@ def get_one_day_forecast(location_key: int, api_key: str) -> OneDayPrediction | 
     )
 
     if r.status_code != 200:
+        print(r.json())
         return None
 
     resp = r.json()
@@ -159,6 +162,7 @@ def get_one_day_hourly_forecast(
     )
 
     if r.status_code != 200:
+        print(r.json())
         return None
 
     resp = r.json()
