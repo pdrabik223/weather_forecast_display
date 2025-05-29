@@ -73,7 +73,9 @@ def get_headline(location: str) -> str:
 
 def get_day_prediction(location_key: int, api_key: str) -> dict:
     one_day_prediction: OneDayPrediction = get_one_day_forecast(location_key, api_key)
-    print(one_day_prediction["day_icon"])
+
+    if one_day_prediction == None:
+        return None
 
     da_fuck_f_string_1 = round(one_day_prediction["min_temperature"])
     da_fuck_f_string_2 = round(one_day_prediction["max_temperature"])
@@ -92,6 +94,9 @@ def get_hourly_prediction(location_key: int, api_key: str) -> dict:
     now = datetime.datetime.now()
 
     hourly_predictions = get_one_day_hourly_forecast(location_key, api_key)
+
+    if hourly_predictions == None:
+        return None
 
     for i in range(no_weather_boxes):
         print(i, hourly_predictions[i]["weather_icon"])
@@ -123,11 +128,20 @@ def index():
     if api_key == None or location_key == None or location == None:
         return 500
 
+    day = get_day_prediction(location_key, api_key)
+    hour = get_hourly_prediction(location_key, api_key)
+
+    if day == None or hour == None:
+        return render_template(
+            "error_page.html",
+            description="Błąd pobierania danych",
+        )
+
     return render_template(
         "weather_page.html",
         headline=get_headline(location),
-        **get_day_prediction(location_key, api_key),
-        **get_hourly_prediction(location_key, api_key),
+        **day,
+        **hour,
     )
 
 
@@ -143,8 +157,14 @@ def get_weather_screenshot():
 
     url = "http://192.168.0.108:5000/"
     url = f"{url}?api_key={api_key}&location_key={location_key}&location={location}"
+    # html = index(
+    # **{"api_key": api_key, "location_key": location_key, "location": location}
+    # )
 
-    data = io.BytesIO(get_grayscale_screenshot(url))
+    try:
+        data = io.BytesIO(get_grayscale_screenshot(url))
+    except Exception as ex:
+        pass
 
     return send_file(
         data,
