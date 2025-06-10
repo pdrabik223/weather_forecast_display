@@ -1,4 +1,4 @@
-from app import App, load_html, format_dit
+from pi_pico_w_server_tools.app import App, compose_response, load_html, format_dict
 from machine import Pin
 from config import *
 import requests
@@ -7,17 +7,17 @@ import framebuf
 import time
 
 
-def home_page(cl, params, named_params: dict):
+def home_page(cl, params: dict):
 
-    print(named_params)
+    print(params)
 
-    load_data = named_params.get("load_data", None)
+    load_data = params.get("load_data", None)
 
     if load_data != None:
         load_weather_data()
 
-    raw_html = format_dit(
-        load_html("index.html"),
+    raw_html = format_dict(
+        load_html("static/index.html"),
         {
             "remote_url": remote_url,
             "auto_refresh_interval_minutes": str(auto_refresh_interval_minutes),
@@ -26,21 +26,28 @@ def home_page(cl, params, named_params: dict):
         },
     )
 
-    cl.send(raw_html)
+    cl.sendall(compose_response(response=raw_html))
 
 
-def load_weather_data():
+def load_weather_data() -> bool:
 
     response = requests.get(
         f"{remote_url}/weather_screenshot?api_key={weather_api_key}&location_key={location_key}&location={location}"
     )
+
+    if response.status_code != 200:
+        print(f"{remote_url}, connection closed")
+        return False
+
     for i in range(len(epd.buffer_black)):
         epd.buffer_black[i] = response.content[i]
 
     epd.imageblack = framebuf.FrameBuffer(
         epd.buffer_black, EPD_WIDTH, EPD_HEIGHT, framebuf.MONO_HLSB
     )
+
     epd.display()
+    return True
 
 
 Pin("LED", Pin.OUT).value(1)
@@ -48,19 +55,20 @@ epd = EPD_7in5_B()
 import _thread
 
 if __name__ == "__main__":
-    app = App()
-    app.register_endpoint("/", home_page)
-    app.register_endpoint("/load_weather_data", load_weather_data)
+
+    app = App(hostname="weather_station.local")
+    app.register_endpoint("/v1", home_page)
+    app.register_endpoint("/v1/load_weather_data", load_weather_data)
 
     try:
 
-        _thread.start_new_thread(app.main_loop, ())
+        app.main_loop()
 
-        while True:
-            load_weather_data()
-            time.sleep(60 * auto_refresh_interval_minutes)
-            
+        # while True:
+        # load_weather_data()
+        # time.sleep(60 * auto_refresh_interval_minutes)
+
     except (KeyboardInterrupt, Exception) as ex:
-        print("safe exiting")
+        print(f"exiting: {ex}")
 
     Pin("LED", Pin.OUT).value(0)

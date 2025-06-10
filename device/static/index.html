@@ -36,21 +36,21 @@
 
             <h2>Adres</h2>
             <p>Miejsce dla którego dane o pogodzie zostaną pobrane</p>
-            <input type="text" value="{location}" name="location" />
+            <input type="text" value="{{location}}" name="location" />
 
             <h2>Url zewnętrznego serwera</h2>
             <p>Ścieżka do serwera zewnętrznego</p>
-            <input type="text" value="{remote_url}" name="remote_url" />
+            <input type="text" value="{{remote_url}}" name="remote_url" />
 
             <h2>Częstotliwość odświeżania automatycznego</h2>
             <p>Ilość minut pomiędzy odświeżeniem ekranu</p>
-            <input type="number" min="1" max="1440" step="1" value="{auto_refresh_interval_minutes}"
+            <input type="number" min="1" max="1440" step="1" value="{{auto_refresh_interval_minutes}}"
                 name="auto_refresh_interval_minutes" />
 
 
             <h2>Weather api key</h2>
             <p>Miejsce dla którego dane o pogodzie zostaną pobrane</p>
-            <input type="password" value="{weather_api_key}" name="weather_api_key" />
+            <input type="password" value="{{weather_api_key}}" name="weather_api_key" />
             <input type="hidden" name="save_config" value="true" />
             <input type="submit" value="Zapisz" style="margin-top: 4%;" />
         </form>

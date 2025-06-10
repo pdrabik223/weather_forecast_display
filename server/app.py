@@ -121,7 +121,6 @@ def index():
     api_key = request.args.get("api_key", default=None)
     location_key = request.args.get("location_key", default=None)
     location = request.args.get("location", default=None)
-    # location = location.decode("utf-8")
 
     location_key = int(location_key)
 
