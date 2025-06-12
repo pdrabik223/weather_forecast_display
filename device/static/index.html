@@ -24,7 +24,7 @@
     <H1>Ustawienia stacji pogodowej </H1>
     <div class="config-cell" style="margin-top: 2%;">
 
-        <form action="./" method="GET">
+        <form action="./v1" method="GET">
             <h2>Refresh data</h2>
             <p>Pobiera nowe dane pogodowe</p>
             <input type="hidden" name="load_data" value="true" />
@@ -32,7 +32,7 @@
         </form>
     </div>
     <div class="config-cell" style="margin-top: 2%;">
-        <form action="./" method="GET">
+        <form action="./v1" method="GET">
 
             <h2>Adres</h2>
             <p>Miejsce dla którego dane o pogodzie zostaną pobrane</p>
@@ -47,7 +47,6 @@
             <input type="number" min="1" max="1440" step="1" value="{{auto_refresh_interval_minutes}}"
                 name="auto_refresh_interval_minutes" />
 
-
             <h2>Weather api key</h2>
             <p>Miejsce dla którego dane o pogodzie zostaną pobrane</p>
             <input type="password" value="{{weather_api_key}}" name="weather_api_key" />
@@ -55,7 +54,7 @@
             <input type="submit" value="Zapisz" style="margin-top: 4%;" />
         </form>
 
-        <form action="./" method="GET">
+        <form action="./v1" method="GET">
             <input type="hidden" name="load_default_config" value="true" />
             <input type="submit" class="secondary" value="Wczytaj domyślne" style="margin-top: 2%;" />
         </form>
