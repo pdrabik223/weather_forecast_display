@@ -1,7 +1,6 @@
 import json
 from pi_pico_w_server_tools.app import App, compose_response, load_html, format_dict
 from machine import Pin
-from config import *
 import requests
 from e_paper_7_5_B import EPD_7in5_B, EPD_WIDTH, EPD_HEIGHT
 import framebuf
@@ -37,25 +36,43 @@ class GateConfig:
         try:
             with open(self.path, "r") as file:
                 return json.loads(file.read())
+
         except Exception as err:
             print(f"{self.path} file not found")
             raise Exception(f"{self.path} file not found")
 
     def update_config(self):
         data = {
-            "remote_url": remote_url,
-            "auto_refresh_interval_minutes": auto_refresh_interval_minutes,
-            "location": location,
-            "location_key": location_key,
-            "weather_api_key": weather_api_key,
+            "remote_url": self.remote_url,
+            "auto_refresh_interval_minutes": self.auto_refresh_interval_minutes,
+            "location": self.location,
+            "location_key": self.location_key,
+            "weather_api_key": self.weather_api_key,
         }
 
-        try:
-            with open(self.path, "w") as file:
-                file.write(json.dumps(data))
-        except Exception as err:
-            print(f"{self.path} file not found")
-            raise Exception(f"{self.path} file not found")
+        config: dict[str, str] = self.__get_gate_config()
+
+        write_settings_to_file = False
+
+        for key in config:
+            try:
+                if data[key] != config[key]:
+                    write_settings_to_file = True
+                    break
+            except KeyError as err:
+                write_settings_to_file = True
+                break
+        if write_settings_to_file:
+            print("saving config to file")
+            try:
+                with open(self.path, "w") as file:
+                    file.write(json.dumps(data))
+                    file.flush()
+            except Exception as err:
+                print(f"{self.path} file not found")
+                raise Exception(f"{self.path} file not found")
+        else:
+            print("config file is already up to date")
 
 
 def home_page(cl, params: dict):
@@ -77,15 +94,18 @@ def home_page(cl, params: dict):
             gate_config.auto_refresh_interval_minutes = int(
                 params.get("auto_refresh_interval_minutes")
             )
+
         gate_config.update_config()
 
     raw_html = format_dict(
         load_html("static/index.html"),
         {
-            "remote_url": remote_url,
-            "auto_refresh_interval_minutes": str(auto_refresh_interval_minutes),
-            "location": location,
-            "weather_api_key": weather_api_key,
+            "remote_url": gate_config.remote_url,
+            "auto_refresh_interval_minutes": str(
+                gate_config.auto_refresh_interval_minutes
+            ),
+            "location": gate_config.location,
+            "weather_api_key": gate_config.weather_api_key,
         },
     )
 
@@ -95,11 +115,11 @@ def home_page(cl, params: dict):
 def load_weather_data() -> bool:
 
     response = requests.get(
-        f"{remote_url}/weather_screenshot?api_key={weather_api_key}&location_key={location_key}&location={location}"
+        f"{gate_config.remote_url}/weather_screenshot?api_key={gate_config.weather_api_key}&location_key={gate_config.location_key}&location={gate_config.location}"
     )
 
     if response.status_code != 200:
-        print(f"{remote_url}, connection closed")
+        print(f"{gate_config.remote_url}, connection closed")
         return False
 
     for i in range(len(epd.buffer_black)):
