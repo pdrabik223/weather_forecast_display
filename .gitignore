@@ -172,3 +172,5 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+device/wifi_config.json
+gate_config/wifi_config.json
