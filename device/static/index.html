@@ -2,6 +2,9 @@
 <html>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<!--
+https://4mrnhq.csb.app/
+-->
 <!-- <link rel="stylesheet" href="style.css"> -->
 
 <head>
@@ -18,6 +21,64 @@
         }
     </style>
 
+    <script type="text/javascript">
+        window.onload = get_config().then((resp) => update_ui(resp));
+
+        function update_ui(resp_json) {
+            console.log(resp_json)
+
+            document.getElementById("auto_refresh_interval_minutes").value = Number(resp_json["auto_refresh_interval_minutes"]);
+            document.getElementById("location").value = resp_json["location"];
+            document.getElementById("remote_url").value = resp_json["remote_url"];
+            document.getElementById("weather_api_key").value = resp_json["weather_api_key"];
+
+        }
+
+        function download_city_data() {
+            console.log("erm")
+        }
+        function set_config() {
+            dict = {
+                "auto_refresh_interval_minutes": document.getElementById("auto_refresh_interval_minutes").value,
+                "location": document.getElementById("location").value,
+                "remote_url": document.getElementById("remote_url").value,
+                "weather_api_key": document.getElementById("weather_api_key").value
+            }
+            send_config(dict)
+        }
+
+        function get_config() {
+            return get_resp('/v1/get_config').then((resp) => { return resp.json(); })
+        }
+
+        async function send_config(named_params) {
+            url = '/v1/set_config?';
+
+            if (named_params != null) {
+                for (const [key, value] of Object.entries(named_params)) {
+                    url += String(key) + "=" + String(value) + "&";
+                }
+            }
+
+            // TODO simplify this this
+            get_resp(url).then(() => get_config().then((resp) => update_ui(resp)));
+        }
+
+        function get_resp(url) {
+            return fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response;
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
+        }
+
+    </script>
+
 </head>
 
 <body style="padding: 5% 5%; max-width: 1400px; min-width: 400px;  margin: auto;">
@@ -32,32 +93,38 @@
         </form>
     </div>
     <div class="config-cell" style="margin-top: 2%;">
-        <form action="./v1" method="GET">
 
-            <h2>Adres</h2>
-            <p>Miejsce dla którego dane o pogodzie zostaną pobrane</p>
-            <input type="text" value="{{location}}" name="location" />
+        <h2>Adres</h2>
+        <p>Miejsce dla którego dane o pogodzie zostaną pobrane</p>
+        <!-- <input type="search" placeholder="{{location}}" name="location" /> -->
 
-            <h2>Url zewnętrznego serwera</h2>
-            <p>Ścieżka do serwera zewnętrznego</p>
-            <input type="text" value="{{remote_url}}" name="remote_url" />
+        <fieldset role="group">
 
-            <h2>Częstotliwość odświeżania automatycznego</h2>
-            <p>Ilość minut pomiędzy odświeżeniem ekranu</p>
-            <input type="number" min="1" max="1440" step="1" value="{{auto_refresh_interval_minutes}}"
-                name="auto_refresh_interval_minutes" />
+            <!-- <input type="text" value="{{remote_url}}" name="remote_url" /> -->
+            <input id="location" type="text" placeholder="loading...">
+            <button onclick="download_city_data()">Szukaj</button>
+        </fieldset>
+        <div id="locations list">
 
-            <h2>Weather api key</h2>
-            <p>Miejsce dla którego dane o pogodzie zostaną pobrane</p>
-            <input type="password" value="{{weather_api_key}}" name="weather_api_key" />
-            <input type="hidden" name="save_config" value="true" />
-            <input type="submit" value="Zapisz" style="margin-top: 4%;" />
-        </form>
+        </div>
 
-        <form action="./v1" method="GET">
-            <input type="hidden" name="load_default_config" value="true" />
-            <input type="submit" class="secondary" value="Wczytaj domyślne" style="margin-top: 2%;" />
-        </form>
+
+        <h2>Url zewnętrznego serwera</h2>
+        <p>Ścieżka do serwera zewnętrznego</p>
+        <input id="remote_url" type="text" placeholder="loading..." />
+
+        <h2>Częstotliwość odświeżania automatycznego</h2>
+        <p>Ilość minut pomiędzy odświeżeniem ekranu</p>
+
+        <input type="number" min="1" max="1440" step="1" id="auto_refresh_interval_minutes" placeholder="loading..." />
+
+        <h2>Weather api key</h2>
+        <p>Miejsce dla którego dane o pogodzie zostaną pobrane</p>
+
+        <input type="text" id="weather_api_key" placeholder="loading..." />
+
+        <button onclick="set_config()" style="margin-top: 4%; width: 100%;">Zapisz</button>
+
     </div>
 
 </body>

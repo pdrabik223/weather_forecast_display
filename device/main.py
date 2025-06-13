@@ -41,14 +41,21 @@ class GateConfig:
             print(f"{self.path} file not found")
             raise Exception(f"{self.path} file not found")
 
-    def update_config(self):
-        data = {
+    def get_dict(self, obscure_weather_api_key: bool = False):
+        return {
             "remote_url": self.remote_url,
             "auto_refresh_interval_minutes": self.auto_refresh_interval_minutes,
             "location": self.location,
             "location_key": self.location_key,
-            "weather_api_key": self.weather_api_key,
+            "weather_api_key": (
+                obscure_api_key(self.weather_api_key)
+                if obscure_weather_api_key
+                else self.weather_api_key
+            ),
         }
+
+    def update_config(self):
+        data = self.get_dict()
 
         config: dict[str, str] = self.__get_gate_config()
 
@@ -62,54 +69,62 @@ class GateConfig:
             except KeyError as err:
                 write_settings_to_file = True
                 break
-        if write_settings_to_file:
-            print("saving config to file")
-            try:
-                with open(self.path, "w") as file:
-                    file.write(json.dumps(data))
-                    file.flush()
-            except Exception as err:
-                print(f"{self.path} file not found")
-                raise Exception(f"{self.path} file not found")
-        else:
+
+        if not write_settings_to_file:
             print("config file is already up to date")
+            return
+
+        print("saving config to file")
+        try:
+            with open(self.path, "w") as file:
+                file.write(json.dumps(data))
+                file.flush()
+
+        except Exception:
+            print(f"{self.path} file not found")
+            raise Exception(f"{self.path} file not found")
+
+
+def obscure_api_key(key: str) -> str:
+
+    return "".join(["•" for _ in range(len(key) - 5)]) + key[-5:]
 
 
 def home_page(cl, params: dict):
-    if params.get("load_data") is not None:
-        load_weather_data()
 
-    if params.get("save_config") is not None:
+    cl.sendall(compose_response(response=load_html("static/index.html")))
 
-        if params.get("remote_url") is not None:
-            gate_config.remote_url = params.get("remote_url")
 
-        if params.get("weather_api_key") is not None:
-            gate_config.location_key = params.get("weather_api_key")
+def update_local_config(cl, params: dict) -> bool:
 
-        if params.get("location") is not None:
-            gate_config.location = params.get("location")
+    if params.get("remote_url") is not None:
+        gate_config.remote_url = params.get("remote_url")
 
-        if params.get("auto_refresh_interval_minutes") is not None:
-            gate_config.auto_refresh_interval_minutes = int(
-                params.get("auto_refresh_interval_minutes")
-            )
+    if params.get("weather_api_key") is not None:
+        key = str(params.get("weather_api_key"))
+        if "•" not in key:
+            gate_config.weather_api_key = key
 
-        gate_config.update_config()
+    if params.get("location") is not None:
+        gate_config.location = params.get("location")
 
-    raw_html = format_dict(
-        load_html("static/index.html"),
-        {
-            "remote_url": gate_config.remote_url,
-            "auto_refresh_interval_minutes": str(
-                gate_config.auto_refresh_interval_minutes
-            ),
-            "location": gate_config.location,
-            "weather_api_key": gate_config.weather_api_key,
-        },
-    )
+    if params.get("auto_refresh_interval_minutes") is not None:
+        gate_config.auto_refresh_interval_minutes = int(
+            params.get("auto_refresh_interval_minutes")
+        )
 
-    cl.sendall(compose_response(response=raw_html))
+    gate_config.update_config()
+
+    cl.sendall(compose_response())
+
+
+def get_local_config(cl, params: dict) -> bool:
+    data = json.dumps(gate_config.get_dict(True))
+    cl.sendall(compose_response(response=data))
+
+
+def search_for_location_data(cl, params: dict):
+    pass
 
 
 def load_weather_data() -> bool:
@@ -145,6 +160,8 @@ if __name__ == "__main__":
 
     app.register_endpoint("/v1", home_page)
     app.register_endpoint("/v1/load_weather_data", load_weather_data)
+    app.register_endpoint("/v1/get_config", get_local_config)
+    app.register_endpoint("/v1/set_config", update_local_config)
 
     try:
 
