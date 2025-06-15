@@ -85,28 +85,23 @@ https://4mrnhq.csb.app/
     <H1>Ustawienia stacji pogodowej </H1>
     <div class="config-cell" style="margin-top: 2%;">
 
-        <form action="./v1" method="GET">
-            <h2>Refresh data</h2>
-            <p>Pobiera nowe dane pogodowe</p>
-            <input type="hidden" name="load_data" value="true" />
-            <input type="submit" class="primary" value="Odśwież" />
-        </form>
+        <h2>Refresh data</h2>
+        <p>Pobiera nowe dane pogodowe</p>
+        <button onclick="get_resp('/v1/load_weather_data')" style="margin-top: 4%; width: 100%;">Odśwież</button>
     </div>
     <div class="config-cell" style="margin-top: 2%;">
 
         <h2>Adres</h2>
         <p>Miejsce dla którego dane o pogodzie zostaną pobrane</p>
-        <!-- <input type="search" placeholder="{{location}}" name="location" /> -->
 
         <fieldset role="group">
 
-            <!-- <input type="text" value="{{remote_url}}" name="remote_url" /> -->
             <input id="location" type="text" placeholder="loading...">
             <button onclick="download_city_data()">Szukaj</button>
         </fieldset>
         <div id="locations list">
-
         </div>
+
 
 
         <h2>Url zewnętrznego serwera</h2>

@@ -129,9 +129,14 @@ def search_for_location_data(cl, params: dict):
 
 def load_weather_data() -> bool:
 
-    response = requests.get(
-        f"{gate_config.remote_url}/weather_screenshot?api_key={gate_config.weather_api_key}&location_key={gate_config.location_key}&location={gate_config.location}"
-    )
+    try:
+        response = requests.get(
+            f"{gate_config.remote_url}/weather_screenshot?api_key={gate_config.weather_api_key}&location_key={gate_config.location_key}&location={gate_config.location}",
+            timeout=5,
+        )
+    except Exception as ex:
+        print(str(ex))
+        return False
 
     if response.status_code != 200:
         print(f"{gate_config.remote_url}, connection closed")
@@ -148,7 +153,12 @@ def load_weather_data() -> bool:
     return True
 
 
-Pin("LED", Pin.OUT).value(1)
+def load_weather_data_endpoint(cl, params: dict):
+    if load_weather_data():
+        cl.sendall(compose_response())
+    else:
+        cl.sendall(compose_response(500, "Failed to load new weather data"))
+
 
 epd = EPD_7in5_B()
 gate_config = GateConfig()
@@ -159,17 +169,19 @@ import _thread
 if __name__ == "__main__":
 
     app.register_endpoint("/v1", home_page)
-    app.register_endpoint("/v1/load_weather_data", load_weather_data)
+    app.register_endpoint("/v1/load_weather_data", load_weather_data_endpoint)
     app.register_endpoint("/v1/get_config", get_local_config)
     app.register_endpoint("/v1/set_config", update_local_config)
+
+    Pin("LED", Pin.OUT).value(1)
 
     try:
 
         app.main_loop()
 
         # while True:
-        # load_weather_data()
-        # time.sleep(60 * auto_refresh_interval_minutes)
+        #     load_weather_data()
+        #     time.sleep(60 * auto_refresh_interval_minutes)
 
     except (KeyboardInterrupt, Exception) as ex:
         print(f"exiting: {ex}")
