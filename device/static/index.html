@@ -33,6 +33,7 @@ https://4mrnhq.csb.app/
             document.getElementById("weather_api_key").value = resp_json["weather_api_key"];
 
 
+
             has_access_to_internet = document.getElementById("has_access_to_internet")
             has_access_to_server = document.getElementById("has_access_to_server")
             reload_forecast = document.getElementById("reload_forecast")
@@ -44,9 +45,11 @@ https://4mrnhq.csb.app/
                 if (resp_json["has_access_to_server"]) {
                     has_access_to_server.innerText = "Połączono z serwerem RS";
                     reload_forecast.disabled = false
+                    document.getElementById("search_location").disabled = false
                 } else {
                     has_access_to_server.innerText = "Brak połączenia z serwerem, skontaktuj się z administratorem RS";
                     reload_forecast.disabled = true
+                    // document.getElementById("search_location").disabled = true
                 }
 
             } else {
@@ -54,6 +57,7 @@ https://4mrnhq.csb.app/
                 has_access_to_internet.innerText = "Brak połączenia z internetem, sprawdź ustawienia rutera";
                 has_access_to_server.innerText = "Brak połączenia z serwerem, sprawdź ustawienia rutera";
                 reload_forecast.disabled = true
+                // document.getElementById("search_location").disabled = true
             }
 
 
@@ -62,9 +66,6 @@ https://4mrnhq.csb.app/
 
         }
 
-        function download_city_data() {
-            console.log("erm")
-        }
         function set_config() {
             dict = {
                 // "auto_refresh_interval_minutes": document.getElementById("auto_refresh_interval_minutes").value,
@@ -90,6 +91,19 @@ https://4mrnhq.csb.app/
 
             // TODO simplify this this
             get_resp(url).then(() => get_config().then((resp) => update_ui(resp)));
+        }
+
+        async function search_for_location(named_params) {
+            url = '/v1/search_for_location?';
+            if (named_params != null) {
+                for (const [key, value] of Object.entries(named_params)) {
+                    url += String(key) + "=" + String(value) + "&";
+                }
+            }
+
+            console.log(url)
+            // TODO simplify this this
+            get_resp(url).then(() => { });
         }
 
         function get_resp(url) {
@@ -135,7 +149,11 @@ https://4mrnhq.csb.app/
         <fieldset role="group">
 
             <input id="location" type="text" placeholder="łączenie...">
-            <button onclick="download_city_data()">Szukaj</button>
+            <button id="search_location" onclick="search_for_location(
+                {
+                    'location': document.getElementById('location').value
+                }
+            )">Szukaj</button>
         </fieldset>
         <div id="locations list">
         </div>

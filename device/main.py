@@ -129,8 +129,8 @@ def get_local_config(cl, params: dict) -> bool:
 
 
 def search_for_location_data(cl, params: dict):
-
-    pass
+    print(params)
+    cl.sendall(compose_response())
 
 
 def load_weather_data() -> bool:
@@ -179,6 +179,7 @@ if __name__ == "__main__":
     app.register_endpoint("/v1/load_weather_data", load_weather_data_endpoint)
     app.register_endpoint("/v1/get_config", get_local_config)
     app.register_endpoint("/v1/set_config", update_local_config)
+    app.register_endpoint("/v1/search_for_location", search_for_location_data)
 
     Pin("LED", Pin.OUT).value(1)
 
