@@ -170,7 +170,6 @@ epd = EPD_7in5_B()
 gate_config = GateConfig()
 app = App(hostname="weather_station.local")
 
-
 import _thread
 
 if __name__ == "__main__":
@@ -180,6 +179,7 @@ if __name__ == "__main__":
     app.register_endpoint("/v1/get_config", get_local_config)
     app.register_endpoint("/v1/set_config", update_local_config)
     app.register_endpoint("/v1/search_for_location", search_for_location_data)
+    app.register_endpoint("/v1/status", lambda cl, _: cl.sendall(compose_response()))
 
     Pin("LED", Pin.OUT).value(1)
 
