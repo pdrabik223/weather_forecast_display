@@ -1,4 +1,5 @@
 import json
+from pi_pico_w_server_tools.wifi_tools import check_connection
 from pi_pico_w_server_tools.app import App, compose_response, load_html, format_dict
 from machine import Pin
 import requests
@@ -119,11 +120,16 @@ def update_local_config(cl, params: dict) -> bool:
 
 
 def get_local_config(cl, params: dict) -> bool:
-    data = json.dumps(gate_config.get_dict(True))
-    cl.sendall(compose_response(response=data))
+    data = gate_config.get_dict(True)
+
+    data["has_access_to_internet"] = check_connection()
+    data["has_access_to_server"] = check_connection(gate_config.remote_url)
+
+    cl.sendall(compose_response(response=json.dumps(data)))
 
 
 def search_for_location_data(cl, params: dict):
+
     pass
 
 
@@ -163,6 +169,7 @@ def load_weather_data_endpoint(cl, params: dict):
 epd = EPD_7in5_B()
 gate_config = GateConfig()
 app = App(hostname="weather_station.local")
+
 
 import _thread
 
