@@ -130,6 +130,15 @@ def get_local_config(cl, params: dict) -> bool:
 
 def search_for_location_data(cl, params: dict):
     print(params)
+
+    try:
+        response = requests.get(
+            f"{gate_config.remote_url}/?location={params['location']}",
+            timeout=5,
+        )
+    except Exception as ex:
+        print(str(ex))
+        return False
     cl.sendall(compose_response())
 
 
