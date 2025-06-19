@@ -168,9 +168,6 @@ def get_weather_screenshot():
 
     url = "http://192.168.0.108:5000/v1/"
     url = f"{url}?api_key={api_key}&location_key={location_key}&location={location}"
-    # html = index(
-    # **{"api_key": api_key, "location_key": location_key, "location": location}
-    # )
 
     try:
         data = io.BytesIO(get_grayscale_screenshot(url))
@@ -195,8 +192,6 @@ def get_location():
         print(location)
         return {}, 400
 
-    # url = "http://192.168.0.108:5000/"
-    # url = f"{url}?api_key={api_key}&location={location}"
     location = (
         location.encode("latin-1")
         .decode("unicode_escape")
@@ -204,34 +199,9 @@ def get_location():
         .decode("utf-8")
     )
 
-    # print(location.decode('unicode_escape'))
-
-    # html = index(
-    # **{"api_key": api_key, "location_key": location_key, "location": location}
-    # )
-
     try:
-        # locations = get_locations(location, api_key)
-        locations = [
-            {
-                "name": "Łódź",
-                "key": "274340",
-                "parent_city": None,
-                "supplemental_admin_areas": ["Lodz", "Lodz"],
-            },
-            {
-                "name": "Łódź",
-                "key": "2678057",
-                "parent_city": "Bodzewo",
-                "supplemental_admin_areas": ["Gostyń", "Piaski"],
-            },
-            {
-                "name": "Łódź",
-                "key": "1399747",
-                "parent_city": None,
-                "supplemental_admin_areas": ["Poznań", "Stęszew"],
-            },
-        ]
+        locations = get_locations(location, api_key)
+
         if locations is None:
             return {}, 500
 

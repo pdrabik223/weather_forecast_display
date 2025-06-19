@@ -107,7 +107,12 @@ def update_local_config(cl, params: dict) -> bool:
             gate_config.weather_api_key = key
 
     if params.get("location") is not None:
-        gate_config.location = params.get("location")
+        location = params.get("location")
+        location_data = location.split(" ")
+        gate_config.location = location_data[0].strip()
+        gate_config.location_key = (
+            location_data[1].replace("(", "").replace(")", "").strip()
+        )
 
     if params.get("auto_refresh_interval_minutes") is not None:
         gate_config.auto_refresh_interval_minutes = int(
@@ -121,7 +126,7 @@ def update_local_config(cl, params: dict) -> bool:
 
 def get_local_config(cl, params: dict) -> bool:
     data = gate_config.get_dict(True)
-
+    data["location"] = data["location"] + " (" + data["location_key"] + ")"
     data["has_access_to_internet"] = check_connection()
     data["has_access_to_server"] = check_connection(
         gate_config.remote_url + "/v1/status"
@@ -142,8 +147,19 @@ def search_for_location_data(cl, params: dict):
             f"{gate_config.remote_url}/v1/location?location={params['location']}&api_key={gate_config.weather_api_key}",
             timeout=5,
         )
+
+        locations_buffer = {}
+
+        for elem in response.json():
+            locations_buffer[elem["key"]] = elem["name"]
+
+        print(response.__dict__)
+
+        cl.sendall(compose_response(response=response.__dict__["_cached"]))
+
     except Exception as ex:
         print(str(ex))
+
         return False
 
     cl.sendall(
