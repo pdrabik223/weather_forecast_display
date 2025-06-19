@@ -1,11 +1,12 @@
 # # save this as app.py
 import datetime
 import io
-from flask import Flask, render_template, request, send_file
+from flask import Flask, json, render_template, request, send_file
 
 from e_ink_screen_tools import get_grayscale_screenshot
 from accu_weather import (
     OneDayPrediction,
+    get_locations,
     get_one_day_forecast,
     get_one_day_hourly_forecast,
 )
@@ -115,7 +116,12 @@ def get_hourly_prediction(location_key: int, api_key: str) -> dict:
     return pred_dict
 
 
-@app.route("/")
+@app.route("/v1/status")
+def status():
+    return {"status": "ok"}, 200
+
+
+@app.route("/v1/")
 def index():
 
     api_key = request.args.get("api_key", default=None)
@@ -125,7 +131,7 @@ def index():
     location_key = int(location_key)
 
     if api_key == None or location_key == None or location == None:
-        return 500
+        return {}, 500
 
     day = get_day_prediction(location_key, api_key)
     hour = get_hourly_prediction(location_key, api_key)
@@ -144,17 +150,23 @@ def index():
     )
 
 
-@app.route("/weather_screenshot")
+@app.route("/v1/weather_screenshot")
 def get_weather_screenshot():
 
     api_key = request.args.get("api_key", default=None)
     location_key = request.args.get("location_key", default=None)
     location = request.args.get("location", default=None)
 
-    if api_key == None or location_key == None or location == None:
-        return 500
+    if api_key is None or location_key is None or location is None:
+        return {}, 400
+    try:
+        if type(location_key) is str:
+            location_key = int(location_key)
+    except Exception as ex:
+        print("incorrect location_key")
+        return {}, 400
 
-    url = "http://192.168.0.108:5000/"
+    url = "http://192.168.0.108:5000/v1/"
     url = f"{url}?api_key={api_key}&location_key={location_key}&location={location}"
     # html = index(
     # **{"api_key": api_key, "location_key": location_key, "location": location}
@@ -170,3 +182,61 @@ def get_weather_screenshot():
         mimetype="application/x-binary",
         download_name="weather_forecast_location_time",
     )
+
+
+@app.route("/v1/location")
+def get_location():
+
+    api_key = request.args.get("api_key", default=None)
+    location = request.args.get("location", default=None)
+
+    if api_key is None or location is None:
+        print(api_key)
+        print(location)
+        return {}, 400
+
+    # url = "http://192.168.0.108:5000/"
+    # url = f"{url}?api_key={api_key}&location={location}"
+    location = (
+        location.encode("latin-1")
+        .decode("unicode_escape")
+        .encode("latin-1")
+        .decode("utf-8")
+    )
+
+    # print(location.decode('unicode_escape'))
+
+    # html = index(
+    # **{"api_key": api_key, "location_key": location_key, "location": location}
+    # )
+
+    try:
+        # locations = get_locations(location, api_key)
+        locations = [
+            {
+                "name": "Łódź",
+                "key": "274340",
+                "parent_city": None,
+                "supplemental_admin_areas": ["Lodz", "Lodz"],
+            },
+            {
+                "name": "Łódź",
+                "key": "2678057",
+                "parent_city": "Bodzewo",
+                "supplemental_admin_areas": ["Gostyń", "Piaski"],
+            },
+            {
+                "name": "Łódź",
+                "key": "1399747",
+                "parent_city": None,
+                "supplemental_admin_areas": ["Poznań", "Stęszew"],
+            },
+        ]
+        if locations is None:
+            return {}, 500
+
+    except Exception as ex:
+        print(str(ex))
+        pass
+
+    return json.dumps(locations), 200
