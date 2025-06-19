@@ -123,30 +123,39 @@ def get_local_config(cl, params: dict) -> bool:
     data = gate_config.get_dict(True)
 
     data["has_access_to_internet"] = check_connection()
-    data["has_access_to_server"] = check_connection(gate_config.remote_url)
+    data["has_access_to_server"] = check_connection(
+        gate_config.remote_url + "/v1/status"
+    )
 
     cl.sendall(compose_response(response=json.dumps(data)))
 
 
+locations_buffer = {}
+
+
 def search_for_location_data(cl, params: dict):
     print(params)
+    global locations_buffer
 
     try:
         response = requests.get(
-            f"{gate_config.remote_url}/?location={params['location']}",
+            f"{gate_config.remote_url}/v1/location?location={params['location']}&api_key={gate_config.weather_api_key}",
             timeout=5,
         )
     except Exception as ex:
         print(str(ex))
         return False
-    cl.sendall(compose_response())
+
+    cl.sendall(
+        compose_response(status_code=500, status_message="server side exception")
+    )
 
 
 def load_weather_data() -> bool:
 
     try:
         response = requests.get(
-            f"{gate_config.remote_url}/weather_screenshot?api_key={gate_config.weather_api_key}&location_key={gate_config.location_key}&location={gate_config.location}",
+            f"{gate_config.remote_url}/v1/weather_screenshot?api_key={gate_config.weather_api_key}&location_key={gate_config.location_key}&location={gate_config.location}",
             timeout=5,
         )
     except Exception as ex:
