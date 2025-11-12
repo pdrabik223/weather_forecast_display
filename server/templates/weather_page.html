@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
+        rel="stylesheet">
+    <title>Weather station control panel</title>
+    <style>
+        body {
+            font-family: "Roboto Mono", monospace;
+            font-optical-sizing: auto;
+            font-weight: 600;
+            font-style: normal;
+        }
+
+
+        .display {
+
+            height: 480px;
+            width: 800px;
+            background-color: #fff;
+
+        }
+
+        .weather-container {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .weather-box {
+
+            width: 80px;
+            margin: 10px;
+            /* padding: 6px; */
+            float: left;
+            /* classic row layout */
+            background-color: #fff;
+            /* border: 1px solid #000; */
+            font-size: 18px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .hour {
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+
+        .temp {
+            font-weight: bold;
+            color: #d33;
+        }
+
+        .clearfix:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="display">
+        <h1 style="font-size: 52; text-align: right; margin-bottom: 24px;">{{headline}}</h1>
+        <table style="margin-bottom: 24px;">
+            <tr>
+                <td>
+                    <img src="{{day_icon}}" width="100%">
+                </td>
+                <td>
+                    <div style="float: left; text-align: left; padding-left: 20px;">
+                        <div style="font-size: 22px;" class="temp">{{temp_min}}</div>
+                        <div style="font-size: 22px; font-weight: bold;">{{temp_max}}</div>
+                        <div style="font-size: 22px; font-weight: bold;">{{precipitation}}</div>
+                    </div>
+                </td>
+            </tr>
+
+        </table>
+
+        <div class="weather-container clearfix">
+            <div class="weather-box">
+                <div class="hour">{{hour_0}}</div>
+                <img src="{{pred_icon_0}}" width="100%">
+                <div>{{hour_temp_0}} {{precipitation_probability_0}}</div>
+            </div>
+            <div class="weather-box">
+                <div class="hour">{{hour_1}}</div>
+                <img src="{{pred_icon_1}}" width="100%">
+                <div>{{hour_temp_1}} {{precipitation_probability_1}}</div>
+            </div>
+            <div class="weather-box">
+                <div class="hour">{{hour_2}}</div>
+                <img src="{{pred_icon_2}}" width="100%">
+                <div>{{hour_temp_2}} {{precipitation_probability_2}}</div>
+            </div>
+            <div class="weather-box">
+                <div class="hour">{{hour_3}}</div>
+                <img src="{{pred_icon_3}}" width="100%">
+                <div>{{hour_temp_3}} {{precipitation_probability_3}}</div>
+            </div>
+            <div class="weather-box">
+                <div class="hour">{{hour_4}}</div>
+                <img src="{{pred_icon_4}}" width="100%">
+
+                <div>{{hour_temp_4}} {{precipitation_probability_4}}</div>
+            </div>
+            <div class="weather-box">
+                <div class="hour">{{hour_5}}</div>
+                <img src="{{pred_icon_5}}" width="100%">
+                <div>{{hour_temp_5}} {{precipitation_probability_5}}</div>
+            </div>
+            <div class="weather-box">
+                <div class="hour">{{hour_6}}</div>
+                <img src="{{pred_icon_6}}" width="100%">
+
+                <div>{{hour_temp_6}} {{precipitation_probability_6}}</div>
+            </div>
+            <div class="weather-box">
+                <div class="hour">{{hour_7}}</div>
+                <img src="{{pred_icon_7}}" width="100%">
+                <div>{{hour_temp_7}} {{precipitation_probability_7}}</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

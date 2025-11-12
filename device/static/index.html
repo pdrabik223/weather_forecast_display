@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+<!--
+https://4mrnhq.csb.app/
+-->
+<!-- <link rel="stylesheet" href="style.css"> -->
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Weather Station</title>
+    <!-- <link rel="icon" type="image/x-icon" href="robot_arm.png"> -->
+    <style>
+        .config-cell {
+            padding: 24px;
+            border-style: solid;
+            border-radius: 24px;
+            margin-bottom: 4%;
+        }
+    </style>
+
+    <script type="text/javascript">
+        window.onload = get_config().then((resp) => update_ui(resp));
+
+        function update_ui(resp_json) {
+            console.log(resp_json)
+
+            // document.getElementById("auto_refresh_interval_minutes").value = Number(resp_json["auto_refresh_interval_minutes"]);
+            document.getElementById("location").value = resp_json["location"];
+            document.getElementById("remote_url").value = resp_json["remote_url"];
+            document.getElementById("weather_api_key").value = resp_json["weather_api_key"];
+
+            has_access_to_internet = document.getElementById("has_access_to_internet")
+            has_access_to_server = document.getElementById("has_access_to_server")
+            reload_forecast = document.getElementById("reload_forecast")
+
+            if (resp_json["has_access_to_internet"]) {
+
+                has_access_to_internet.innerText = "Połączono z internetem";
+
+                if (resp_json["has_access_to_server"]) {
+                    has_access_to_server.innerText = "Połączono z serwerem RS";
+                    reload_forecast.disabled = false
+                    document.getElementById("search_location").disabled = false
+                } else {
+                    has_access_to_server.innerText = "Brak połączenia z serwerem, skontaktuj się z administratorem RS";
+                    reload_forecast.disabled = true
+                    document.getElementById("search_location").disabled = true
+                }
+
+            } else {
+
+                has_access_to_internet.innerText = "Brak połączenia z internetem, sprawdź ustawienia rutera";
+                has_access_to_server.innerText = "Brak połączenia z serwerem, sprawdź ustawienia rutera";
+                reload_forecast.disabled = true
+                document.getElementById("search_location").disabled = true
+            }
+
+        }
+
+        function set_config() {
+            dict = {
+                // "auto_refresh_interval_minutes": document.getElementById("auto_refresh_interval_minutes").value,
+                "location": document.getElementById("location").value,
+                "remote_url": document.getElementById("remote_url").value,
+                "weather_api_key": document.getElementById("weather_api_key").value
+            }
+            send_config(dict)
+        }
+
+        function get_config() {
+            return get_resp('/v1/get_config').then((resp) => { return resp.json(); })
+        }
+
+        function send_config(named_params) {
+            url = '/v1/set_config?';
+
+            if (named_params != null) {
+                for (const [key, value] of Object.entries(named_params)) {
+                    url += String(key) + "=" + String(value) + "&";
+                }
+            }
+
+            // TODO simplify this this
+            get_resp(url).then(() => get_config().then((resp) => update_ui(resp)));
+        }
+
+        function search_for_location(named_params) {
+            url = '/v1/search_for_location?';
+            if (named_params != null) {
+                for (const [key, value] of Object.entries(named_params)) {
+                    url += String(key) + "=" + String(value) + "&";
+                }
+            }
+
+            // TODO simplify this this
+            get_resp(url).then((resp) => update_locations_list(resp));
+        }
+
+        async function update_locations_list(locations) {
+            locations = await locations.json()
+            locations_str = " <h4>Wybierz jeden z poniższych adresów:</h4>"
+            for (i = 0; i < locations.length; i++) {
+
+                locations_str += '<input type="radio" onclick = "on_radial_click(\'' +
+                    locations[i]['name'] + '\',\'' + locations[i]['key']
+                    + '\')" id="radio-' + i.toString() + '" name="radio" value="radio-' + i.toString() + '">'
+
+                locations_str += locations[i]['name'] + ', '
+
+                if (locations[i]['parent_city'] !== null) {
+                    locations_str += locations[i]['parent_city'] + ' '
+                }
+                if (locations[i]['supplemental_admin_areas'] !== null) {
+                    for (area in locations[i]['supplemental_admin_areas'])
+                        locations_str += locations[i]['supplemental_admin_areas'][area] + " "
+                }
+
+                locations_str += ' (' + locations[i]['key'] + ')<br><br>'
+            }
+
+            document.getElementById("locations_list").innerHTML = locations_str
+        }
+
+        function on_radial_click(location_str, location_key) {
+
+            document.getElementById("location").value = location_str + ' (' + location_key + ')'
+
+        }
+
+
+
+        function get_resp(url) {
+            return fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response;
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
+        }
+
+    </script>
+
+</head>
+
+<body style="padding: 5% 5%; max-width: 1400px; min-width: 400px;  margin: auto;">
+    <H1>Ustawienia stacji pogodowej </H1>
+    <div class="config-cell" style="margin-top: 2%;">
+
+        <h2>Załaduj prognozę pogody</h2>
+        <p>Pobiera aktualne dane pogodowe, informacje odświeżają się automatycznie każdego dnia o 4:00, 8:00, 16:00 i
+            18:00.</p>
+
+
+        <p id="has_access_to_internet">Łączenie z internetem...</p>
+
+        <p id="has_access_to_server">Łączenie z serwerem...</p>
+
+        <button id="reload_forecast" onclick="get_resp('/v1/load_weather_data')" disabled="true"
+            style="width: 100%;">Odśwież</button>
+
+
+    </div>
+    <div class="config-cell" style="margin-top: 2%;">
+
+        <h2>Adres</h2>
+        <p>Miejsce dla którego dane o pogodzie zostaną pobrane</p>
+
+        <fieldset role="group">
+
+            <input id="location" type="text" placeholder="łączenie...">
+            <button id="search_location" onclick="search_for_location(
+                {
+                    'location': document.getElementById('location').value
+                }
+            )">Szukaj</button>
+        </fieldset>
+
+        <div id="locations_list">
+
+
+        </div>
+
+
+
+        <h2>Url zewnętrznego serwera</h2>
+        <p>Ścieżka do serwera zewnętrznego</p>
+        <input id="remote_url" type="text" placeholder="łączenie..." />
+
+
+        <h2>Weather api key</h2>
+        <p>Miejsce dla którego dane o pogodzie zostaną pobrane</p>
+
+        <input type="text" id="weather_api_key" placeholder="łączenie..." />
+
+        <button onclick="set_config()" style="margin-top: 4%; width: 100%;">Zapisz</button>
+
+    </div>
+
+</body>
+
+</html>

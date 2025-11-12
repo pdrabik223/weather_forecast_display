@@ -1,2 +1,6 @@
 flask
 htmlwebshot==0.1.0
+pillow
+imgkit
+numpy
+requests

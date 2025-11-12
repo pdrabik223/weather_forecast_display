@@ -10,8 +10,6 @@ Raspberry Pi Pico W
 Waveshare Pico-ePaper-7.5B 
 [documentation](https://www.waveshare.com/wiki/Pico-ePaper-7.5-B)
 
-
-
 | e-Paper | Pico/Pico2 | Description                                                         |
 | :-----: | :--------: | :------------------------------------------------------------------ |
 |   VCC   |    VSYS    | Power input                                                         |
@@ -49,3 +47,11 @@ https://openweathermap.org/weather-conditions
 ## Setup
 
 800 x 480
+
+## html to pdf
+https://wkhtmltopdf.org/downloads.html
+
+### run flask locally
+```bash
+flask --app app.py --debug run --host=0.0.0.0
+``` 

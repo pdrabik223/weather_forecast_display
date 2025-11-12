@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
+        rel="stylesheet">
+
+    <title>Weather station control panel</title>
+    <style>
+        body {
+            font-family: "Roboto Mono", monospace;
+            font-optical-sizing: auto;
+            font-weight: 600;
+            font-style: normal;
+        }
+
+
+
+        .display {
+            width: 100%;
+            /* background: red; */
+            height: 480;
+            width: 800;
+            /* padding: 20px; */
+        }
+
+        .main-panel {
+
+            /* width: 112px; */
+            margin: 4px;
+            padding: 6px;
+            float: left;
+            /* classic row layout */
+            background-color: #fff;
+            /* border: 1px solid #000; */
+            font-size: 24px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+
+
+        /* Clearfix for older browsers */
+        .clearfix:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="display">
+        <h1> Error </h1>
+        <div class="main-panel clearfix">{{description}}</div>
+    </div>
+</body>
+
+</html>
